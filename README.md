@@ -1,17 +1,17 @@
 # ML Stock Analysis Project
 
-This project analyzes US stock market data with a focus on the S&P 500 and Nasdaq indices using theoretical data science principles.
+## Overview
+This project compares Logistic Regression and SVM models on S&P 500 and Nasdaq indices to identify predictive patterns.
 
-## Preconceptions
-* Market data is non stationary and exhibits complex non linear patterns.
-* Simple linear predictors will likely show underfitting on raw market returns.
-* Applying regularization and stability analysis is essential to avoid overfitting.
+## Methodology
+We utilized historical daily returns as features to predict the direction of the next day's price. The comparison focuses on model selection and generalization capabilities.
 
-## Theoretical Basis
-This project applies core concepts from the course syllabus:
-* Linear predictors and margin based analysis.
-* Model selection and regularization principles.
-* Stability of learning algorithms to prevent overfitting.
+## Comparison and Discussion
+The results show the performance of both linear and non-linear models. 
+- Logistic Regression provides a baseline for linear separability.
+- SVM with an RBF kernel allows for non-linear decision boundaries.
 
-## Methodology and Findings
-We implemented a classification pipeline to predict daily return direction and evaluated model accuracy and stability across train and test splits.
+The similarity in accuracy across models suggests that market returns are close to a random walk, aligning with the Efficient Market Hypothesis. This implies that neither model captures a strong predictive signal from past daily returns alone.
+
+## Conclusion
+Model selection is critical in financial data. While non-linear models like SVM are theoretically more powerful, the lack of significant accuracy gains indicates that the complexity of the data requires more than simple technical indicators for robust prediction.
