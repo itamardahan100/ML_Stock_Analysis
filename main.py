@@ -1,24 +1,46 @@
 import pandas as pd
 import yfinance as yf
+import matplotlib.pyplot as plt
 from sklearn.linear_model import LogisticRegression
+from sklearn.svm import SVC
 from sklearn.model_selection import train_test_split
 
-# Fetch historical data for S&P 500
-data = yf.download('^GSPC', start='2015-01-01', end='2026-07-28')
+tickers = ['^GSPC', '^IXIC']
+results = []
 
-# Feature engineering: daily returns and binary target
-data['Returns'] = data['Close'].pct_change()
-data['Target'] = (data['Returns'] > 0).astype(int)
-data.dropna(inplace=True)
+for ticker in tickers:
+    print(f"\n--- Analyzing {ticker} ---")
+    
+    # 1. Data Fetching
+    data = yf.download(ticker, start='2015-01-01', end='2026-07-28')
+    data['Returns'] = data['Close'].pct_change()
+    data['Target'] = (data['Returns'] > 0).astype(int)
+    data.dropna(inplace=True)
 
-# Train test split for linear predictor
-X = data[['Returns']].shift(1).dropna()
-y = data['Target'].iloc[1:]
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, shuffle=False)
+    # 2. Visualization (Saving the plot)
+    plt.figure() 
+    data['Close'].plot(title=f'{ticker} Historical Price', figsize=(10, 6))
+    
+   
+    filename = f"{ticker.replace('^', '')}_plot.png" 
+    plt.savefig(filename)
+    plt.close() 
+    
+    print(f"Visualization saved as {filename}")
 
-# Model training and evaluation
-model = LogisticRegression()
-model.fit(X_train, y_train)
+    # 3. Model Training and Comparison
+    X = data[['Returns']].shift(1).dropna()
+    y = data['Target'].iloc[1:]
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, shuffle=False)
 
-accuracy = model.score(X_test, y_test)
-print(f"Model accuracy is: {accuracy:.4f}")
+    models = {'Logistic Regression': LogisticRegression(), 'SVM (RBF)': SVC(kernel='rbf')}
+    
+    for name, model in models.items():
+        model.fit(X_train, y_train)
+        acc = model.score(X_test, y_test)
+        results.append({'Ticker': ticker, 'Model': name, 'Accuracy': acc})
+
+# 4. Results Table
+df_results = pd.DataFrame(results)
+print("\n--- Model Comparison Table ---")
+print(df_results)
